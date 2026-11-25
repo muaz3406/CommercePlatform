@@ -1,0 +1,4 @@
+grpc:
+  clients:
+    catalog:
+      address: ${CATALOG_GRPC_ADDRESS:localhost:9091}

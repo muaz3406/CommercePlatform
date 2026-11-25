@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package commerce.seller.v1;
+
+import "commerce/common/v1/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.commerce.contracts.seller.v1";
+option java_outer_classname = "SellerProto";
+
+service SellerOfferService {
+  rpc GetOffer(GetOfferRequest) returns (SellerOffer);
+}
+
+message GetOfferRequest {
+  string offer_id = 1;
+}
+
+message SellerOffer {
+  string offer_id = 1;
+  string seller_id = 2;
+  string product_id = 3;
+  commerce.common.v1.Money unit_price = 4;
+  OfferStatus status = 5;
+}
+
+enum OfferStatus {
+  OFFER_STATUS_UNSPECIFIED = 0;
+  OFFER_STATUS_ACTIVE = 1;
+  OFFER_STATUS_PAUSED = 2;
+  OFFER_STATUS_REMOVED = 3;
+}

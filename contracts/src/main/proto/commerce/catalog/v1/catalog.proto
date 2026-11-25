@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package commerce.catalog.v1;
+
+option java_multiple_files = true;
+option java_package = "com.commerce.contracts.catalog.v1";
+option java_outer_classname = "CatalogProto";
+
+service CatalogService {
+  rpc GetProduct(GetProductRequest) returns (Product);
+}
+
+message GetProductRequest {
+  string product_id = 1;
+}
+
+message Product {
+  string product_id = 1;
+  string name = 2;
+  string brand = 3;
+  string category_id = 4;
+  string gtin = 5;
+  map<string, string> attributes = 6;
+  ProductStatus status = 7;
+  int64 version = 8;
+}
+
+enum ProductStatus {
+  PRODUCT_STATUS_UNSPECIFIED = 0;
+  PRODUCT_STATUS_DRAFT = 1;
+  PRODUCT_STATUS_ACTIVE = 2;
+  PRODUCT_STATUS_REJECTED = 3;
+}

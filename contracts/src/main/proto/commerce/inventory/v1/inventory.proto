@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package commerce.inventory.v1;
+
+option java_multiple_files = true;
+option java_package = "com.commerce.contracts.inventory.v1";
+option java_outer_classname = "InventoryProto";
+
+service InventoryService {
+  rpc ReserveStock(ReserveStockRequest) returns (StockReservation);
+  rpc ReleaseStock(ReservationRequest) returns (StockReservation);
+  rpc CommitStock(ReservationRequest) returns (StockReservation);
+}
+
+message ReserveStockRequest {
+  string idempotency_key = 1;
+  string order_id = 2;
+  string offer_id = 3;
+  int32 quantity = 4;
+}
+
+message ReservationRequest {
+  string idempotency_key = 1;
+  string reservation_id = 2;
+}
+
+message StockReservation {
+  string reservation_id = 1;
+  string order_id = 2;
+  string offer_id = 3;
+  int32 quantity = 4;
+  ReservationStatus status = 5;
+}
+
+enum ReservationStatus {
+  RESERVATION_STATUS_UNSPECIFIED = 0;
+  RESERVATION_STATUS_RESERVED = 1;
+  RESERVATION_STATUS_RELEASED = 2;
+  RESERVATION_STATUS_COMMITTED = 3;
+}

@@ -1,0 +1,37 @@
+{
+  "realm": "commerce",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "catalog-manager",
+        "description": "May create and publish canonical catalog products"
+      },
+      {
+        "name": "seller",
+        "description": "Marketplace seller"
+      },
+      {
+        "name": "customer",
+        "description": "Marketplace customer"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "commerce-web",
+      "name": "Commerce local web client",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000"
+      ],
+      "protocol": "openid-connect"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package commerce.payment.v1;
+
+import "commerce/common/v1/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.commerce.contracts.payment.v1";
+option java_outer_classname = "PaymentProto";
+
+service PaymentService {
+  rpc AuthorizePayment(AuthorizePaymentRequest) returns (PaymentAuthorization);
+  rpc VoidPayment(VoidPaymentRequest) returns (PaymentAuthorization);
+}
+
+message AuthorizePaymentRequest {
+  string idempotency_key = 1;
+  string order_id = 2;
+  commerce.common.v1.Money amount = 3;
+  string payment_method_token = 4;
+}
+
+message VoidPaymentRequest {
+  string idempotency_key = 1;
+  string authorization_id = 2;
+}
+
+message PaymentAuthorization {
+  string authorization_id = 1;
+  string order_id = 2;
+  PaymentStatus status = 3;
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_AUTHORIZED = 1;
+  PAYMENT_STATUS_DECLINED = 2;
+  PAYMENT_STATUS_VOIDED = 3;
+  PAYMENT_STATUS_PENDING = 4;
+}

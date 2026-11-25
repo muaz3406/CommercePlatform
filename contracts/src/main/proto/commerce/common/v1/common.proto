@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package commerce.common.v1;
+
+option java_multiple_files = true;
+option java_package = "com.commerce.contracts.common.v1";
+option java_outer_classname = "CommonProto";
+
+message Money {
+  int64 amount_minor = 1;
+  string currency_code = 2;
+}
+
+message PageRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message PageResponse {
+  string next_page_token = 1;
+}

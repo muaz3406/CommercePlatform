@@ -1,0 +1,7 @@
+grpc:
+  server:
+    enabled: true
+
+spring:
+  mongodb:
+    uri: mongodb://${MONGO_ROOT_USERNAME:local-root}:${MONGO_ROOT_PASSWORD:local-mongodb-change-me}@${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/catalog?authSource=admin

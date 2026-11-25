@@ -1,0 +1,25 @@
+# Java / Maven
+target/
+**/target/
+*.class
+*.jar
+*.war
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local containers / test reports
+data/
+logs/
+*.log
