@@ -4,6 +4,10 @@ target/
 *.class
 *.jar
 *.war
+node_modules/
+apps/*/.next/
+apps/*/dist/
+npm-debug.log*
 
 # Local configuration and secrets
 .env

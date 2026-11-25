@@ -17,7 +17,7 @@ public class SellerOfferExceptionHandler {
     }
 
     @ExceptionHandler(CatalogProductNotFoundException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleUnknownProduct(CatalogProductNotFoundException exception) {
         return Map.of("error", "product_not_available", "message", exception.getMessage());
     }

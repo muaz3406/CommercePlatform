@@ -5,11 +5,14 @@ Bu plan, büyük bir alışveriş platformunu küçük, uçtan uca doğrulanabil
 ## Aşama 0 — Ürün keşfi ve mühendislik temeli (başlandı)
 
 - [x] Proje amacı, mimari ilkeler ve teknoloji kararlarını kaydet.
+- [x] Müşteri/satıcı/platform arayüzlerini backend domain sınırlarından ayıran monorepo ve dağıtım kararını kaydet.
 - [x] `main` / `develop` branch yaklaşımını belirle.
 - [x] Java 21 / Spring Boot tabanlı derlenebilir servis iskeleti ekle.
 - [x] Yerel PostgreSQL, Redis ve Keycloak; profilli Kafka ve Elasticsearch altyapısı ekle.
 - [x] Marketplace servis haritasını, Protobuf/gRPC sözleşme politikasını ve Saga/Outbox kararlarını yaz.
 - [ ] MVP kapsamı, kullanıcı rolleri, temel iş kuralları ve ilk ölçülebilir SLO'ları netleştir.
+- [x] `apps/customer-web` (Next.js), `apps/seller-portal` (React + Vite) ve `apps/platform-admin` (React + Vite) uygulama temellerini oluştur.
+- [ ] Frontend uygulamalarının bağımsız build/deploy sınırlarını CI/CD'de tanımla ve domain API'lerine güvenli auth akışını bağla.
 - [ ] Uzak Git deposu, PR şablonu, branch protection, CI pipeline ve GitHub deployment environments kur.
 
 **Çıkış ölçütü:** yeni geliştirici README adımlarını izleyerek projeyi başlatabilir; trunk branch'e merge yalnızca tanımlı CI kontrollerinden geçerek yapılabilir.
@@ -25,6 +28,13 @@ Bu plan, büyük bir alışveriş platformunu küçük, uçtan uca doğrulanabil
 - Güvenlik temeli: threat model, rate limit, güvenli hata yanıtları, dependency/container taraması.
 
 **Çıkış ölçütü:** satıcı yalnızca kendi teklifini yönetebilir; katalog ve teklif verisi yeniden kurulabilir; migration ve negatif auth testleri CI'da geçer.
+
+## Mevcut dikey dilim durumu
+
+- [x] Catalog'da ürün oluşturma, yayınlama, herkese açık sayfalı listeleme ve ürün detayını okuma.
+- [x] Seller'da katalogda yayınlanmış ürüne teklif oluşturma; satıcı kimliği JWT `sub` claim'inden alınır ve duplicate teklif DB kısıtıyla engellenir.
+- [x] Herkese açık aktif teklif listesi: ürün bazında, sayfalı; sadece `ACTIVE` teklifler döner.
+- [ ] Catalog ve seller offer API'leri için entegrasyon/kontrat testleri ve MongoDB GTIN/özellik indeks-validasyon stratejisi.
 
 ## Aşama 2 — Durable checkout Saga ve stok/ödeme tutarlılığı
 
@@ -59,7 +69,9 @@ Bu plan, büyük bir alışveriş platformunu küçük, uçtan uca doğrulanabil
 ## Netleşen ürün kararı
 
 - Başlangıç ürünü: çok satıcılı marketplace.
+- MVP dikey dilimi katalog ve satıcı teklifleri; ürün sayfalarında ürünün aktif teklifleri herkese açık listelenir.
 - Karar verildi: ortak canonical katalog; satıcılar ortak ürüne kendi offer/fiyat/stok bilgilerini ekler. Yeni ürün önerisi moderasyon gerektirir. İlk sürüm satıcı gönderimlidir.
 - Karar verildi: farklı satıcı ürünleri tek checkout/tek ödeme ile alınabilir; order service satıcı bazlı alt-siparişler üretir.
 - Karar verildi: ödeme akışı sağlayıcıdan bağımsız mock/sandbox adapter ile başlar; canlı sağlayıcı olarak iyzico sandbox hedeflenir.
+- Karar verildi: müşteri, satıcı ve platform operasyon ekranları ayrı frontend uygulamaları olacak; ayrı backend kopyaları yerine ortak gateway ve domain servisleri kullanılacak. Uygulamalar monorepo içinde bulunup ayrı dağıtılabilir hedeflenecek.
 - Sonraki kararlar: ilk AWS bütçe sınırı ve hedef availability/latency. Bunlar servis sınırları ve yük testlerinin kabul ölçütlerini belirler.

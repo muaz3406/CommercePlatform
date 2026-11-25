@@ -8,6 +8,14 @@
 - Güvenlik ve operasyonel görünürlük sonradan eklenen özellikler değil, her dikey dilimin parçası olmalı.
 - Her bileşen için yedekleme, migration, gözlemlenebilirlik ve arıza davranışı tanımlanmalı.
 
+## Uygulama kanalları ve dağıtım sınırları
+
+`CommercePlatform` kaynak kodu monorepo'sudur; tek deployable uygulama değildir. Müşteri mağazası (`apps/customer-web`) Next.js ile, satıcı (`apps/seller-portal`) ve platform yönetimi (`apps/platform-admin`) panelleri React + Vite ile ayrı uygulamalar olarak geliştirilir. Her biri bağımsız dağıtılabilir. Üç ayrı ekran, üç ayrı kopya backend anlamına gelmez: uygulamalar ortak API Gateway üzerinden domain API'lerine erişir. UI'ya özel BFF ancak gerçek bir veri birleştirme veya bağımsız evrim ihtiyacı ortaya çıktığında eklenir.
+
+Yetki sınırları backend'de uygulanır: müşteri kendi sipariş/verisini, satıcı yalnızca kendi teklif/stok/sipariş kapsamını görür; platform operasyon rolleri moderasyon ve yönetim işlemleri için dar kapsamlıdır. Satıcı/müşteri kimliği doğrulanmış token'dan veya backend'in doğruladığı sahiplik ilişkisinden alınır; gövdedeki istemci beyanı yetki kaynağı değildir.
+
+Yüksek trafik hedefi için edge katmanı/CDN, stateless gateway ve servislerin yatay çoğaltılması, servis başına veri sahipliği, kuyrukla gevşetilebilen iş akışları ve uçtan uca telemetri hedeflenir. Trafik profili, SLO ve yük testleri olmadan kapasite garantisi verilmez. Cache, read replica, partitioning ve sharding darboğaz ölçüldüğünde değerlendirilir; sipariş/stok/ödeme doğruluğunun yerine geçirilmez. Uygulama ve dağıtım sınırlarının kararı `docs/adr/0007-application-and-deployment-boundaries.md` içindedir.
+
 ## Başlangıç bileşenleri
 
 | Alan | Seçim | Kullanım / sınır |

@@ -7,9 +7,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import com.commerce.contracts.catalog.v1.Product;
 import com.commerce.seller.catalog.CatalogProductClient;
 import io.grpc.Status;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -77,5 +82,24 @@ class SellerOfferServiceTests {
                 CatalogDependencyUnavailableException.class,
                 () -> service.createOffer("seller-1", new CreateOfferRequest("product-1", 12500, "TRY")));
         verify(repository, never()).save(any(SellerOffer.class));
+    }
+
+    @Test
+    void listsOnlyActiveOffersForProductWithPagination() {
+        SellerOfferRepository repository = Mockito.mock(SellerOfferRepository.class);
+        CatalogProductClient catalogClient = Mockito.mock(CatalogProductClient.class);
+        SellerOffer offer = new SellerOffer("seller-1", "product-1", 12500, "TRY");
+        when(repository.findAllByProductIdAndStatus(
+                "product-1",
+                OfferStatus.ACTIVE,
+                PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "createdAt").and(Sort.by("id")))))
+                .thenReturn(new PageImpl<>(List.of(offer)));
+        SellerOfferService service = new SellerOfferService(repository, catalogClient);
+
+        OfferPageResponse response = service.listPublishedOffers("product-1", 0, 20);
+
+        assertEquals(1, response.totalElements());
+        assertEquals("product-1", response.items().getFirst().productId());
+        assertEquals(OfferStatus.ACTIVE, response.items().getFirst().status());
     }
 }

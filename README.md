@@ -14,6 +14,22 @@
 
 Bu depo şu anda bir başlangıç iskeletidir; henüz canlı trafiğe hazır bir ürün değildir. Üretim ortamı için kimlik, veri yönetimi, gözlemlenebilirlik, yedekleme, dağıtım ve yük testleri aşamalı olarak tamamlanmalıdır.
 
+## Uygulama ve dağıtım yaklaşımı
+
+`CommercePlatform` tek geliştirme deposudur; çalışma zamanında tek uygulama olmak zorunda değildir. Müşteri mağazası (`apps/customer-web`) Next.js ile; satıcı (`apps/seller-portal`) ve platform yönetimi (`apps/platform-admin`) panelleri React + Vite ile ayrı, bağımsız dağıtılabilir uygulamalardır. Bu uygulamalar henüz backend API'lerine bağlanmış değildir.
+
+Bu arayüzler ekran başına ayrı backend yerine ortak API Gateway ve domain servislerini kullanır. Yetki servislerde doğrulanır; her uygulama yalnızca giriş yapan kişinin/rolün erişebildiği kaynakları sunar. Domain servisleri ve arayüzler monorepo'da geliştirilse de bağımsız CI/CD ve dağıtım hedefleridir. Yüksek trafik kapasitesi varsayılmaz; SLO, yük testi ve gözlemlenebilirlikle doğrulanır. Ayrıntı: [ADR 0007](docs/adr/0007-application-and-deployment-boundaries.md).
+
+Frontend gereksinimleri: Node.js 20.19+ (veya 22.13+), npm 10.8+. Monorepo kökünden `npm install` ile bağımlılıkları kurun; sonra her uygulamayı ayrı çalıştırın:
+
+```powershell
+npm run dev:customer
+npm run dev:seller
+npm run dev:admin
+```
+
+Bağımsız production build'leri `npm run build:customer`, `npm run build:seller` ve `npm run build:admin` komutlarıyla alınır.
+
 ## Gereksinimler
 
 - JDK 21
@@ -38,7 +54,7 @@ Bu depo şu anda bir başlangıç iskeletidir; henüz canlı trafiğe hazır bir
 
 Şu an catalog ürün API/persistence ve gRPC server işlevlidir. Seller, inventory, order ve payment deployable Spring Boot başlangıçlarıdır; seller'da yerel catalog gRPC client adapter'ı bulunur. Bu modüllerin domain API/DB akışları, order Saga ve production mTLS henüz tamamlanmadı; roadmap sırasıyla uygulanacaktır.
 
-Seller offer akışı da ilk dikey dilim olarak eklendi: `POST http://localhost:8082/api/v1/seller/offers`, `seller` realm rolü taşıyan JWT ister. İstek `productId`, `priceAmountMinor` (en küçük para birimi) ve `currencyCode` taşır; servis katalogda aktif ürünü gRPC ile doğrular ve kendi PostgreSQL `seller` şemasına yazar.
+Seller offer akışı ilk dikey dilim olarak eklendi: `GET http://localhost:8082/api/v1/seller/offers?productId=...` herkese açık biçimde ürünün aktif tekliflerini sayfalı döndürür; `POST http://localhost:8082/api/v1/seller/offers`, `seller` realm rolü taşıyan JWT ister. İstek `productId`, `priceAmountMinor` (en küçük para birimi) ve `currencyCode` taşır; servis katalogda aktif ürünü gRPC ile doğrular ve kendi PostgreSQL `seller` şemasına yazar.
 
 Diğer servisleri ayrı terminal pencerelerinde başlatabilirsiniz:
 
@@ -86,3 +102,4 @@ Ortam ayarları ve sırlar branch'lerde tutulmaz. Test ve üretim ortamları CI/
 - [ADR 0004: Marketplace veri sahipliği ve AWS hedefi](docs/adr/0004-marketplace-data-ownership.md)
 - [ADR 0005: Servis sözleşmeleri ve gRPC](docs/adr/0005-service-contracts-and-communication.md)
 - [ADR 0006: Checkout Saga orchestration](docs/adr/0006-order-saga-orchestration.md)
+- [ADR 0007: Uygulama ve dağıtım sınırları](docs/adr/0007-application-and-deployment-boundaries.md)

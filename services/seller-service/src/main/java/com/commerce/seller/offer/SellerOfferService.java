@@ -1,16 +1,22 @@
 package com.commerce.seller.offer;
 
+import java.util.Objects;
+
 import com.commerce.seller.catalog.CatalogProductClient;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class SellerOfferService {
+
+    private static final int MAX_PAGE_SIZE = 100;
 
     private final SellerOfferRepository offerRepository;
     private final CatalogProductClient catalogProductClient;
@@ -53,6 +59,17 @@ public class SellerOfferService {
             }
             throw exception;
         }
+    }
+
+    public OfferPageResponse listPublishedOffers(String productId, int page, int size) {
+        Page<SellerOffer> offers = offerRepository.findAllByProductIdAndStatus(
+                productId,
+                OfferStatus.ACTIVE,
+                PageRequest.of(
+                        page,
+                        Math.min(size, MAX_PAGE_SIZE),
+                        Sort.by(Sort.Direction.ASC, "createdAt").and(Sort.by("id"))));
+        return OfferPageResponse.from(offers);
     }
 
     private boolean isDuplicateOffer(DataIntegrityViolationException exception) {

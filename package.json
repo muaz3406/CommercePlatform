@@ -1,0 +1,22 @@
+{
+  "name": "commerce-platform-apps",
+  "private": true,
+  "workspaces": [
+    "apps/customer-web",
+    "apps/seller-portal",
+    "apps/platform-admin"
+  ],
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10.8.0"
+  },
+  "scripts": {
+    "dev:customer": "npm run dev --workspace=customer-web",
+    "dev:seller": "npm run dev --workspace=seller-portal",
+    "dev:admin": "npm run dev --workspace=platform-admin",
+    "build:customer": "npm run build --workspace=customer-web",
+    "build:seller": "npm run build --workspace=seller-portal",
+    "build:admin": "npm run build --workspace=platform-admin",
+    "lint": "npm run lint --workspaces"
+  }
+}

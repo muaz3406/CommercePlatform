@@ -30,9 +30,12 @@ Seller verisi için PostgreSQL `seller` şeması kullanılır.
 | Method | Endpoint | Yetki | Açıklama |
 |---|---|---|---|
 | `GET` | `/actuator/health` | Public | Servis sağlık durumu |
+| `GET` | `/api/v1/seller/offers?productId=...` | Public | Ürünün aktif tekliflerini sayfalı döndürür |
 | `POST` | `/api/v1/seller/offers` | `seller` | Oturumdaki satıcı için teklif oluşturur |
 
-İstek gövdesi:
+Teklif listesi `page` (varsayılan `0`) ve `size` (varsayılan `20`, en fazla `100`) parametrelerini destekler. Yanıt `items`, `page`, `size`, `totalElements` ve `totalPages` alanlarını taşır.
+
+Teklif oluşturma isteği:
 
 ```json
 {
